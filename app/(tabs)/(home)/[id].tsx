@@ -1,6 +1,7 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { ARTICLES } from "../../../data/articles";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -17,16 +18,18 @@ const CATEGORY_COLOURS: Record<string, { bg: string; text: string }> = {
 const DEFAULT_COLOUR = { bg: "#F1F5F9", text: "#475569" };
 
 export default function ArticleDetail() {
-    const [bookmarked, setBookmarked]= useState<boolean>(false);
   const { id } = useLocalSearchParams<ArticleParams>();
   const navigation = useNavigation();
+  const [bookmarked, setBookmarked] = useState<boolean>(false);
 
   const article = ARTICLES.find((a) => a.id === id);
 
   // Update the Stack header title once we have the article
   useEffect(() => {
     if (article) {
-      navigation.setOptions({ title: article.title });
+      navigation.setOptions({
+        title: article.title,
+      });
     }
   }, [article]);
 
@@ -39,8 +42,6 @@ export default function ArticleDetail() {
   }
 
   const colour = CATEGORY_COLOURS[article.category] ?? DEFAULT_COLOUR;
-
-  
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -62,6 +63,13 @@ export default function ArticleDetail() {
           </Text>
         ))}
       </ScrollView>
+      <Pressable style={styles.fab} onPress={() => setBookmarked(!bookmarked)}>
+        <Ionicons
+          name={bookmarked ? "bookmark" : "bookmark-outline"}
+          size={26}
+          color="#FFFFFF"
+        />
+      </Pressable>
     </SafeAreaView>
   );
 }
@@ -94,4 +102,16 @@ const styles = StyleSheet.create({
   divider: { height: 1, backgroundColor: "#F1F5F9", marginBottom: 20 },
   body: { fontSize: 15, color: "#334155", lineHeight: 24, marginBottom: 16 },
   notFound: { padding: 40, textAlign: "center", color: "#94A3B8" },
+  fab: {
+    position: "absolute",
+    bottom: 20,
+    right: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: "#0D9488",
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 4,
+  },
 });
